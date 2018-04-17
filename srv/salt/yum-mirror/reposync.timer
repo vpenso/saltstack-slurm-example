@@ -1,0 +1,9 @@
+[Unit]
+Description=Periodically execute package mirror sync
+
+[Timer]
+OnStartupSec=300s
+OnUnitInactiveSec=2h
+
+[Install]
+WantedBy=multi-user.target

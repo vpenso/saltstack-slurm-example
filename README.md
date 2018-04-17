@@ -18,12 +18,21 @@ gpgkey=https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/SALTST
 Start a group of virtual machine [instances](instance.md) and install a master and a couple of minions:
 
 ```bash
->>> NODES lxcm01,lxdev0[1-4]
-# start all VM instances
+>>> NODES lxcm01,lxrepo01,lxrm0[1,2],lxb00[1-4]
+# start new VM instances using `centos7` as source image
 >>> vn s centos7
+# clean up everything and start from scratch
+>>> vn r
 ```
 
-### Deployment
+Node         | Description
+-------------|-------------------------------
+lxcm01       | SaltStack master
+lxrm01       | Slurm master
+lxrm02       | Slurm slave
+lxb00[1-4]   | Slurm execution nodes
+
+### SaltStack Deployment
 
 Install Saltstack on all nodes:
 
@@ -45,19 +54,16 @@ Cf. <https://docs.saltstack.com/en/latest/ref/configuration/index.html>
 '
 ```
 
-
-
-### Usage
+## Usage
 
 Sync the Salt configuration to the master:
 
 ```bash
-# master configuration file
+# master configuration files
 >>> vm sy lxcm01 -r $SALTSTACK_EXAMPLE/etc/salt/master :/etc/salt/
-# 
 >>> vm sy lxcm01 -r $SALTSTACK_EXAMPLE/srv/salt :/srv/
 # accept the keys of all minions
->>> vm ex lxcm01 -r 'salt-key -A -y'
+>>> vm ex lxcm01 -r 'systemctl restart salt-master ; salt-key -A -y'
 # apply the configuration to all nodes
 >>> vm ex lxcm01 -r 'salt '*' state.apply'
 ```
