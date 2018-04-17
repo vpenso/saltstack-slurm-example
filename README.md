@@ -23,7 +23,9 @@ Start a group of virtual machine [instances](instance.md) and install a master a
 >>> vn s centos7
 ```
 
-### Configuration
+### Deployment
+
+Install Saltstack on all nodes:
 
 Cf. <https://docs.saltstack.com/en/latest/ref/configuration/index.html>
 
@@ -41,12 +43,22 @@ Cf. <https://docs.saltstack.com/en/latest/ref/configuration/index.html>
   echo "master: 10.1.1.7" > /etc/salt/minion;
   systemctl start salt-minion && systemctl status salt-minion
 '
-# accept the keys of all minions
->>> vm ex lxcm01 -r 'salt-key -A -y'
 ```
+
+
 
 ### Usage
 
+Sync the Salt configuration to the master:
+
 ```bash
-vm sy lxcm01 -r $SALTSTACK_EXAMPLE/srv/salt :/srv/
+# master configuration file
+>>> vm sy lxcm01 -r $SALTSTACK_EXAMPLE/etc/salt/master :/etc/salt/
+# 
+>>> vm sy lxcm01 -r $SALTSTACK_EXAMPLE/srv/salt :/srv/
+# accept the keys of all minions
+>>> vm ex lxcm01 -r 'salt-key -A -y'
+# apply the configuration to all nodes
+>>> vm ex lxcm01 -r 'salt '*' state.apply'
 ```
+
