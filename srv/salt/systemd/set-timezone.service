@@ -1,0 +1,6 @@
+[Unit]
+Description=Set the time zone to Europe/Berlin
+[Service]
+ExecStart=/usr/bin/timedatectl set-timezone Europe/Berlin
+RemainAfterExit=yes
+Type=oneshot
