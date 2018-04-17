@@ -5,4 +5,4 @@
         name = site
         baseurl = http://lxrepo01.devops.test/repo
         enabled = 1
-        gpgcheck = o
+        gpgcheck = 0
