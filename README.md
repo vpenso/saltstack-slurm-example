@@ -71,9 +71,28 @@ Sync the Salt configuration to the master:
 # master configuration files
 >>> vm sy lxcm01 -r $SALTSTACK_EXAMPLE/etc/salt/master :/etc/salt/
 >>> vm sy lxcm01 -r $SALTSTACK_EXAMPLE/srv/salt :/srv/
-# accept the keys of all minions
->>> vm ex lxcm01 -r 'systemctl restart salt-master ; salt-key -A -y'
-# apply the configuration to all nodes
->>> vm ex lxcm01 -r 'salt '*' state.apply'
+# login to the Salt masyer
+>>> vm ex lxcm01 -r 
 ```
 
+Following a list of commands use on the master:
+
+```bash
+systemctl restart salt-master           # restart the master 
+salt-key -A -y                          # accept all (unaccpeted) Salt minions
+salt <target> state.apply               # configure a node
+```
+
+
+### Package Mirror & Site Repository
+
+Configure `lxrepo01` with [yum-mirror.sls](srv/salt/yum-mirror.sls) and [yum-repo.sls](srv/salt/yum-repo.sls):
+
+```bash
+# confgiure the node
+>>> vm ex lxcm01 -r 'salt lxrepo01.devops.test state.apply'
+# upload Slurm RPM packages into the repository
+>>> vm sy lxrepo01 -r $HOME/projects/centos7_packages/slurm/17.11.3-2/ :/var/www/html/repo/
+# rebuild the package repository
+>>> vm ex lxrepo01 -r 'createrepo /var/www/html/repo'
+```
