@@ -1,8 +1,12 @@
+### Prerequisites
 
+Make sure to understand how to build development and test environments with virtual machines:
 
-Include the SaltStack package repository to the CentOS virtual machine [image](image.md):
+<https://github.com/vpenso/vm-tools>
 
-Cf. <https://docs.saltstack.com/en/latest/topics/installation/rhel.html>
+Include the SaltStack package repository to the CentOS virtual machine image:
+
+<https://docs.saltstack.com/en/latest/topics/installation/rhel.html>
 
 ```bash
 >>> cat /etc/yum.repos.d/salt.repo
@@ -15,7 +19,15 @@ gpgkey=https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/SALTST
        https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/base/RPM-GPG-KEY-CentOS-7
 ```
 
-Start a group of virtual machine [instances](instance.md) and install a master and a couple of minions:
+Node         | Description
+-------------|-------------------------------
+lxcm01       | SaltStack master
+lxrepo01     | CentOS 7 package mirror & site repo
+lxrm0[1,2]   | Slurm master/slave
+lxdb01       | MySQL database
+lxb00[1-4]   | Slurm execution nodes
+
+Start all required virtual machine instances (cf. [clush](https://github.com/vpenso/scripts/blob/master/docs/clush.md)):
 
 ```bash
 >>> NODES lxcm01,lxrepo01,lxdb01,lxrm0[1,2],lxb00[1-4]
@@ -25,13 +37,6 @@ Start a group of virtual machine [instances](instance.md) and install a master a
 >>> vn r
 ```
 
-Node         | Description
--------------|-------------------------------
-lxcm01       | SaltStack master
-lxrepo01     | CentOS 7 package mirror & site repo
-lxrm0[1,2]   | Slurm master/slave
-lxdb01       | MySQL database
-lxb00[1-4]   | Slurm execution nodes
 
 ### SaltStack Deployment
 
