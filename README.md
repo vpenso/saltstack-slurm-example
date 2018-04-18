@@ -1,12 +1,24 @@
-This document helps to build a complete [Slurm cluster](https://slurm.schedmd.com/) in a virtual machine environment. 
+# SaltStack Example
 
-### Prerequisites
+**Build an HPC [Slurm cluster](https://slurm.schedmd.com/) including required infrastructure in virtual machines.**
 
-Make sure to understand how to build development and test environments with virtual machines:
+The shell script ↴ [source_me.sh](source_me.sh) adds the tool-chain in this repository to your shell environment:
+
+```bash
+>>> source source_me.sh
+# list of nodes
+>>> echo $NODES         
+lxcm01,lxrepo01,lxdb01,lxfs01,lxrm0[1,2],lxb00[1-4]
+```
+
+Make sure to understand how to build development and test environments with **vm-tools**:
 
 <https://github.com/vpenso/vm-tools>
 
-Include the SaltStack package repository to the CentOS virtual machine image:
+### Prerequisites
+
+
+Include the SaltStack package repository to the **CentOS** virtual machine image:
 
 <https://docs.saltstack.com/en/latest/topics/installation/rhel.html>
 

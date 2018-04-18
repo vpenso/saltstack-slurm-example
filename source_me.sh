@@ -36,6 +36,8 @@ export SALTSTACK_EXAMPLE=$__dir
 unset __dir
 unset __source
 
+export NODES=lxcm01,lxrepo01,lxdb01,lxfs01,lxrm0[1,2],lxb00[1-4]
+
 #for file in `\ls $SALTSTACK_EXAMPLE/var/aliases/*.sh`
 #do 
 #  source $file
