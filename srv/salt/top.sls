@@ -15,6 +15,7 @@ base:
      - yum
      - slurm
      - slurm-nfs-conf
+     - slurmctld
   lxb00[1-9].devops.test:
      - yum
      - slurm

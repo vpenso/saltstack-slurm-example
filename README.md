@@ -42,7 +42,7 @@ lxfs01       | NFS Slurm configuration server
 lxdb01       | MySQL database
 lxb00[1-4]   | Slurm execution nodes
 
-Start all required virtual machine instances (cf. [clush](https://github.com/vpenso/scripts/blob/master/docs/clush.md)):
+Provision all required virtual machine instances (cf. [clush](https://github.com/vpenso/scripts/blob/master/docs/clush.md)):
 
 ```bash
 >>> NODES lxcm01,lxrepo01,lxdb01,lxfs01,lxrm0[1,2],lxb00[1-4]
@@ -52,8 +52,7 @@ Start all required virtual machine instances (cf. [clush](https://github.com/vpe
 >>> vn r
 ```
 
-
-### SaltStack Deployment
+### Deployment
 
 Install Saltstack on all nodes:
 
@@ -75,7 +74,7 @@ Cf. <https://docs.saltstack.com/en/latest/ref/configuration/index.html>
 '
 ```
 
-## Usage
+## Configuration
 
 Sync the Salt configuration to the master:
 
@@ -170,6 +169,16 @@ lxfs01.devops.test:
 ```
 
 [etc/slurm](etc/slurm) - Slurm cluster configuration files 
+
+### Slurm Workload Manager
+
+| Node       | SLS                                      | Description                                        |
+|------------|------------------------------------------|----------------------------------------------------|
+| lxrm0[1,2] | [nfsd.sls](srv/salt/nfsd.sls)            | Slurm Controller configuration                     |
+
+```bash
+>>> vm ex lxcm01 -r 'salt lxrm0* state.apply'
+```
 
 ### Slurm Execution Nodes
 

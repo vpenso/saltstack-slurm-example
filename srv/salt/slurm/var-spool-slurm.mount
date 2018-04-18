@@ -1,0 +1,12 @@
+[Unit]
+Description=Mount Slurm scheduler state directory
+Wants=network-online.target
+After=network-online.target
+[Mount]
+What=lxfs01.devops.test:/var/spool/slurm
+Where=/var/spool/slurm
+Type=nfs
+Options=rw
+TimeoutSec=10s
+[Install]
+WantedBy=multi-user.target
