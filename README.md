@@ -93,6 +93,7 @@ Commands use on the **master**:
 
 ```bash
 systemctl restart salt-master           # restart the master 
+/var/log/salt/master                    # master log-file
 salt-key -A -y                          # accept all (unaccpeted) Salt minions
 salt-key -d <minion>                    # remove a minion key
 salt-key -a <minion>                    # add a single minion key
@@ -104,6 +105,7 @@ Commands used on a **minion**:
 
 ```bash
 systemctl restart salt-minion           # restart minion
+/var/log/salt/minion                    # minion log-file
 salt-minion -l debug                    # start minion in forground
 ```
 
@@ -174,7 +176,8 @@ lxfs01.devops.test:
 
 | Node       | SLS                                      | Description                                        |
 |------------|------------------------------------------|----------------------------------------------------|
-| lxrm0[1,2] | [nfsd.sls](srv/salt/nfsd.sls)            | Slurm Controller configuration                     |
+| lxrm0[1,2] | [slurmctld.sls](srv/salt/slurmctld.sls)  | Slurm Controller daemon                            |
+|            | [slurmdbd.sls](srv/salt/slurmdbd.sls)    | Slurm Database daemon                              |
 
 ```bash
 >>> vm ex lxcm01 -r 'salt lxrm0* state.apply'

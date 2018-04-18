@@ -1,3 +1,6 @@
+slurmctld_packages:
+  pkg.installed:
+    - name: slurm-slurmctld
 slurmctld_spool:
   file.directory:
     - name: /var/lib/slurm/ctld
@@ -9,3 +12,16 @@ slurmctld_nfs_spool:
   service.running:
     - name: var-spool-slurm.mount
     - enable: True
+slurmctld_firewall:
+  file.managed:
+    - name: /etc/firewalld/services/slurmctld.xml
+    - source: salt://slurm/slurmctld.xml
+  service.running:
+    - name: firewalld.service
+    - watch:
+      - file: /etc/firewalld/services/slurmctld.xml
+  firewalld.present:
+    - name: public
+    - services:
+      - slurmctld
+    - prune_services: False
