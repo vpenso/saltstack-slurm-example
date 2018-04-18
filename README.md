@@ -1,3 +1,5 @@
+This document helps to build a complete [Slurm cluster](https://slurm.schedmd.com/) in a virtual machine environment. 
+
 ### Prerequisites
 
 Make sure to understand how to build development and test environments with virtual machines:
@@ -24,13 +26,14 @@ Node         | Description
 lxcm01       | SaltStack master
 lxrepo01     | CentOS 7 package mirror & site repo
 lxrm0[1,2]   | Slurm master/slave
+lxfs01       | NFS Slurm configuration server
 lxdb01       | MySQL database
 lxb00[1-4]   | Slurm execution nodes
 
 Start all required virtual machine instances (cf. [clush](https://github.com/vpenso/scripts/blob/master/docs/clush.md)):
 
 ```bash
->>> NODES lxcm01,lxrepo01,lxdb01,lxrm0[1,2],lxb00[1-4]
+>>> NODES lxcm01,lxrepo01,lxdb01,lxfs01,lxrm0[1,2],lxb00[1-4]
 # start new VM instances using `centos7` as source image
 >>> vn s centos7
 # clean up everything and start from scratch
@@ -92,7 +95,12 @@ salt-minion -l debug                    # start minion on forground
 
 ### Package Mirror & Site Repository
 
-Configure `lxrepo01` with [yum-mirror.sls](srv/salt/yum-mirror.sls) and [yum-repo.sls](srv/salt/yum-repo.sls):
+Configure `lxrepo01` with: 
+
+SLS                                       | Description
+------------------------------------------|----------------------------------------------------
+[yum-mirror.sls](srv/salt/yum-mirror.sls) | Configure a CentOS 7 package mirror
+[yum-repo.sls](srv/salt/yum-repo.sls)     | Configure a package repository for custom RPMs 
 
 ```bash
 # confgiure the node
@@ -107,7 +115,12 @@ Nodes using [yum.sls](srv/salt/yum.sls) will us the site repository.
 
 ### SQL Database
 
-Configure 'lxdb01' with [mariadb.sls](srv/salt/mariadb.sls) and [slurm-db-access.sls](srv/salt/slurm-db-access.sls):
+Configure `lxdb01` with: 
+
+SLS                                       | Description
+------------------------------------------|----------------------------------------------------
+[mariadb.sls](srv/salt/mariadb.sls)       | Configure the MariaDB database server
+[slurm-db-access.sls](srv/salt/slurm-db-access.sls) | Grant access to the database for Slurm
 
 ```bash
 # configure the database server
@@ -120,3 +133,25 @@ lxdb01.devops.test:
 ```
 
 Cf. [mysql](https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.mysql.html) execution module
+
+### NFS Server
+
+Configure `lxfs01` with:
+
+SLS                                       | Description
+------------------------------------------|----------------------------------------------------
+[nfsd.sls](srv/salt/nfsd.sls)             | NFS server for the Slurm configuration & state
+
+```bash
+# configure the database server
+>>> vm ex lxcm01 -r 'salt lxfs01* state.apply'
+# check the exports
+>>> vm ex lxcm01 -r 'salt lxfs01* cmd.run exportfs'
+lxfs01.devops.test:
+    /etc/slurm          lxrm*
+    /etc/slurm          lx*
+    /var/spool/slurm
+                lxrm*
+# upload the common Slurm configuration to the NFS server
+>>> vm sy lxfs01 -r $SALTSTACK_EXAMPLE/etc/slurm/ :/etc/slurm
+```
