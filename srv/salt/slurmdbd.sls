@@ -14,3 +14,7 @@ slurmdbd_firewall:
     - services:
       - slurmdbd
     - prune_services: False
+slurmdbd_service:
+  service.running:
+    - name: slurmdbd.service
+    - enable: True
