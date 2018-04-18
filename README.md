@@ -78,29 +78,32 @@ Sync the Salt configuration to the master:
 >>> vm ex lxcm01 -r 
 ```
 
-Commands use on the master:
+Commands use on the **master**:
 
 ```bash
 systemctl restart salt-master           # restart the master 
 salt-key -A -y                          # accept all (unaccpeted) Salt minions
+salt-key -d <minion>                    # remove a minion key
+salt-key -a <minion>                    # add a single minion key
 salt <target> state.apply               # configure a node
+salt <target> cmd.run <command> ...     # execute a shell command on nodes
 ```
 
-Commands used on a minion:
+Commands used on a **minion**:
 
 ```bash
-salt-minion -l debug                    # start minion on forground
+systemctl restart salt-minion           # restart minion
+salt-minion -l debug                    # start minion in forground
 ```
 
 
 ### Package Mirror & Site Repository
 
-Configure `lxrepo01` with: 
 
-SLS                                       | Description
-------------------------------------------|----------------------------------------------------
-[yum-mirror.sls](srv/salt/yum-mirror.sls) | Configure a CentOS 7 package mirror
-[yum-repo.sls](srv/salt/yum-repo.sls)     | Configure a package repository for custom RPMs 
+|Nodes    | SLS                                       | Description                                        |
+|---------|-------------------------------------------|----------------------------------------------------|
+|lxrepo01 | [yum-mirror.sls](srv/salt/yum-mirror.sls) | Configure a CentOS 7 package mirror                |
+|         | [yum-repo.sls](srv/salt/yum-repo.sls)     | Configure a package repository for custom RPMs     |
 
 ```bash
 # confgiure the node
@@ -117,10 +120,10 @@ Nodes using [yum.sls](srv/salt/yum.sls) will us the site repository.
 
 Configure `lxdb01` with: 
 
-SLS                                       | Description
-------------------------------------------|----------------------------------------------------
-[mariadb.sls](srv/salt/mariadb.sls)       | Configure the MariaDB database server
-[slurm-db-access.sls](srv/salt/slurm-db-access.sls) | Grant access to the database for Slurm
+| Node    | SLS                                      | Description                                        |
+|---------|------------------------------------------|----------------------------------------------------|
+| lxdb01  | [mariadb.sls](srv/salt/mariadb.sls)      | Configure the MariaDB database server              |
+|         | [slurm-db-access.sls](srv/salt/slurm-db-access.sls) | Grant access to the database for Slurm  |
 
 ```bash
 # configure the database server
@@ -136,11 +139,9 @@ Cf. [mysql](https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.my
 
 ### NFS Server
 
-Configure `lxfs01` with:
-
-SLS                                       | Description
-------------------------------------------|----------------------------------------------------
-[nfsd.sls](srv/salt/nfsd.sls)             | NFS server for the Slurm configuration & state
+Nodes    | SLS                                       | Description
+---------|-------------------------------------------|----------------------------------------------------
+lxfs01   | [nfsd.sls](srv/salt/nfsd.sls)             | NFS server for the Slurm configuration & state
 
 ```bash
 # configure the database server
@@ -154,4 +155,13 @@ lxfs01.devops.test:
                 lxrm*
 # upload the common Slurm configuration to the NFS server
 >>> vm sy lxfs01 -r $SALTSTACK_EXAMPLE/etc/slurm/ :/etc/slurm
+```
+
+[etc/slurm](etc/slurm) - Slurm cluster configuration files 
+
+### Slurm Execution Nodes
+
+```bash
+# configure the database server
+>>> vm ex lxcm01 -r 'salt lxb* state.apply'
 ```
