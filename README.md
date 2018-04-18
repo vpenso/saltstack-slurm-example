@@ -97,6 +97,7 @@ systemctl restart salt-master           # restart the master
 salt-key -A -y                          # accept all (unaccpeted) Salt minions
 salt-key -d <minion>                    # remove a minion key
 salt-key -a <minion>                    # add a single minion key
+salt <target> test.ping                 # check if a minion repsonds
 salt <target> state.apply               # configure a node
 salt <target> cmd.run <command> ...     # execute a shell command on nodes
 ```
