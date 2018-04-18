@@ -96,3 +96,5 @@ Configure `lxrepo01` with [yum-mirror.sls](srv/salt/yum-mirror.sls) and [yum-rep
 # rebuild the package repository
 >>> vm ex lxrepo01 -r 'createrepo /var/www/html/repo'
 ```
+
+Nodes using [yum.sls](srv/salt/yum.sls) will us the site repository.

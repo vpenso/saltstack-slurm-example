@@ -7,3 +7,4 @@ base:
      - yum-repo
   lxb00[1-9].devops.test:
      - yum
+     - slurm
