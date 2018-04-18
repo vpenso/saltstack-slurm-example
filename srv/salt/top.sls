@@ -11,6 +11,11 @@ base:
      - slurm-db-access
   lxfs01.devops.test:
      - nfsd
+  lxrm0[1,2].devops.test:
+     - yum
+     - slurm
+     - slurm-nfs-conf
   lxb00[1-9].devops.test:
      - yum
      - slurm
+     - slurm-nfs-conf

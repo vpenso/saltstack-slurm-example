@@ -1,0 +1,12 @@
+[Unit]
+Description=Mount SLURM configuration
+Wants=network-online.target
+After=network-online.target
+[Mount]
+What=lxfs01.devops.test:/etc/slurm
+Where=/etc/slurm
+Type=nfs
+Options=ro,nosuid
+TimeoutSec=10s
+[Install]
+WantedBy=multi-user.target
