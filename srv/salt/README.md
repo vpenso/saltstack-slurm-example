@@ -14,3 +14,5 @@ State modules used in this example:
 - [user](https://docs.saltstack.com/en/latest/ref/states/all/salt.states.user.html)
 - [group](https://docs.saltstack.com/en/latest/ref/states/all/salt.states.group.html)
 - [cmd](https://docs.saltstack.com/en/latest/ref/states/all/salt.states.cmd.html)
+- [firewalld](https://docs.saltstack.com/en/latest/ref/states/all/salt.states.firewalld.html)
+- [mysql_grants](https://docs.saltstack.com/en/latest/ref/states/all/salt.states.mysql_grants.html)

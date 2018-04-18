@@ -75,12 +75,18 @@ Sync the Salt configuration to the master:
 >>> vm ex lxcm01 -r 
 ```
 
-Following a list of commands use on the master:
+Commands use on the master:
 
 ```bash
 systemctl restart salt-master           # restart the master 
 salt-key -A -y                          # accept all (unaccpeted) Salt minions
 salt <target> state.apply               # configure a node
+```
+
+Commands used on a minion:
+
+```bash
+salt-minion -l debug                    # start minion on forground
 ```
 
 
@@ -98,3 +104,19 @@ Configure `lxrepo01` with [yum-mirror.sls](srv/salt/yum-mirror.sls) and [yum-rep
 ```
 
 Nodes using [yum.sls](srv/salt/yum.sls) will us the site repository.
+
+### SQL Database
+
+Configure 'lxdb01' with [mariadb.sls](srv/salt/mariadb.sls) and [slurm-db-access.sls](srv/salt/slurm-db-access.sls):
+
+```bash
+# configure the database server
+>>> vm ex lxcm01 -r 'salt lxdb01* state.apply'
+# query the database configuration
+>>> vm ex lxcm01 -r 'salt lxdb01* mysql.user_grants slurm lxrm01'
+lxdb01.devops.test:
+    - GRANT USAGE ON *.* TO 'slurm'@'lxrm01'
+    - GRANT ALL PRIVILEGES ON `slurm_acct_db`.`*` TO 'slurm'@'lxrm01' WITH GRANT OPTION
+```
+
+Cf. [mysql](https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.mysql.html) execution module
