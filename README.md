@@ -164,6 +164,7 @@ mysql> grant all on slurm_acct_db.* TO 'slurm'@'lxrm02.devops.test' identified b
 mysql> quit
 ```
 
+
 ### NFS Server
 
 Nodes    | SLS                                       | Description
@@ -198,6 +199,25 @@ lxfs01.devops.test:
 >>> vm ex lxcm01 -r 'salt lxrm0* state.apply'
 # check the service daemons
 >>> NODES=lxrm0[1,2] vn ex 'systemctl status slurmctld slurmdbd'
+```
+
+Configure the Slurm accounting database:
+
+```bash
+# register the new cluster
+>>> vm ex lxrm01 -r 'sacctmgr -i add cluster vega'
+# start the SLURM cluster controllers
+>>> NODES=lxrm0[1,2] vn ex 'systemctl restart slurmctld`
+# check the Slurm parition state
+>>> vm ex lxrm01 -r 'sinfo'
+```
+
+Manage the account DB configuration with the file [accounts.conf](etc/slurm/accounts.conf):
+
+```bash
+# load the account configuration
+>>> vm sy lxrm01 -r $SALTSTACK_EXAMPLE/etc/slurm/accounts.conf :/tmp
+>>> vm ex lxrm01 -r 'sacctmgr --immediate load /tmp/accounts.conf'
 ```
 
 ### Slurm Execution Nodes

@@ -14,11 +14,13 @@ base:
      - nfsd
   lxrm0[1,2].devops.test:
      - yum
+     - munge
      - slurm
      - slurm-nfs-conf
      - slurmdbd
      - slurmctld
   lxb00[1-9].devops.test:
      - yum
+     - munge
      - slurm
      - slurm-nfs-conf
