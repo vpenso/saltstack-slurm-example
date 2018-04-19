@@ -25,3 +25,7 @@ slurmctld_firewall:
     - services:
       - slurmctld
     - prune_services: False
+slurmctld_service:
+  service.running:
+    - name: slurmctld.service
+    - enable: True

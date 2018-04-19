@@ -10,6 +10,7 @@ base:
      - mariadb
      - slurm-db-access
   lxfs01.devops.test:
+     - slurm
      - nfsd
   lxrm0[1,2].devops.test:
      - yum

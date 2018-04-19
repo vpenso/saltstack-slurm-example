@@ -6,6 +6,17 @@ nfsd_export_path_{{ path }}:
   file.directory:
     - name: {{ path }}
 {% endfor %}
+{% for path in '/var/spool/slurm/ctld','/var/spool/slurm/ckpt' %}
+nfsd_export_path_{{ path }}:
+  file.directory:
+    - name: {{ path }}
+    - user: slurm
+{% endfor %}
+nfsd_export_path_/var/spool/slurm/archive:
+  file.directory:
+    - name: /var/spool/slurm/archive
+    - user: slurm
+    - mode: '0777'
 nfsd_exports:
   file.managed:
     - name: /etc/exports

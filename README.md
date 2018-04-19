@@ -194,7 +194,10 @@ lxfs01.devops.test:
 |            | [slurmdbd.sls](srv/salt/slurmdbd.sls)    | Slurm Database daemon                              |
 
 ```bash
+# configure the Slurm master and slave 
 >>> vm ex lxcm01 -r 'salt lxrm0* state.apply'
+# check the service daemons
+>>> NODES=lxrm0[1,2] vn ex 'systemctl status slurmctld slurmdbd'
 ```
 
 ### Slurm Execution Nodes
