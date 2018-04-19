@@ -151,6 +151,19 @@ lxdb01.devops.test:
 
 Cf. [mysql](https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.mysql.html) execution module
 
+Unfortunately `slurm-db-access.sls` is not working as expected, you may need to grant access or the slurm user manually:
+
+```bash
+>>> vm ex lxdb01 -r mysql
+# ..configure ...
+mysql> grant all on slurm_acct_db.* TO 'slurm'@'localhost' identified by '12345678' with grant option;
+mysql> grant all on slurm_acct_db.* TO 'slurm'@'lxrm01' identified by '12345678' with grant option;
+mysql> grant all on slurm_acct_db.* TO 'slurm'@'lxrm01.devops.test' identified by '12345678' with grant option;
+mysql> grant all on slurm_acct_db.* TO 'slurm'@'lxrm02' identified by '12345678' with grant option;
+mysql> grant all on slurm_acct_db.* TO 'slurm'@'lxrm02.devops.test' identified by '12345678' with grant option;
+mysql> quit
+```
+
 ### NFS Server
 
 Nodes    | SLS                                       | Description
