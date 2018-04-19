@@ -1,6 +1,14 @@
 # SaltStack Example
 
-**Build an HPC [Slurm cluster](https://slurm.schedmd.com/) including required infrastructure in virtual machines.**
+Build an HPC cluster using the [Slurm](https://slurm.schedmd.com/) workload management system.
+
+This example uses virtual machines setup with **vm-tools**:
+
+<https://github.com/vpenso/vm-tools>
+
+This example demonstrates **SaltStack** as a configuration management system:
+
+<https://docs.saltstack.com/en/latest/>
 
 The shell script ↴ [source_me.sh](source_me.sh) adds the tool-chain in this repository to your shell environment:
 
@@ -11,12 +19,7 @@ The shell script ↴ [source_me.sh](source_me.sh) adds the tool-chain in this re
 lxcm01,lxrepo01,lxdb01,lxfs01,lxrm0[1,2],lxb00[1-4]
 ```
 
-Make sure to understand how to build development and test environments with **vm-tools**:
-
-<https://github.com/vpenso/vm-tools>
-
 ### Prerequisites
-
 
 Include the SaltStack package repository to the **CentOS** virtual machine image:
 
@@ -221,6 +224,10 @@ Manage the account DB configuration with the file [accounts.conf](etc/slurm/acco
 ```
 
 ### Slurm Execution Nodes
+
+| Node       | SLS                                      | Description                                        |
+|------------|------------------------------------------|----------------------------------------------------|
+| lxb0[1-4]  | [slurmd.sls](srv/salt/slurmd.sls)        | Slurm execution node daemon                        |
 
 ```bash
 # configure the database server

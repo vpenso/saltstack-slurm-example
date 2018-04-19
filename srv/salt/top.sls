@@ -24,3 +24,4 @@ base:
      - munge
      - slurm
      - slurm-nfs-conf
+     - slurmd
