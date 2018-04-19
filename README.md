@@ -13,8 +13,9 @@ This example demonstrates **SaltStack** as a configuration management system:
 The shell script ↴ [source_me.sh](source_me.sh) adds the tool-chain in this repository to your shell environment:
 
 ```bash
+# load the environment
 >>> source source_me.sh
-# list of nodes
+# list of required virtual machines
 >>> echo $NODES         
 lxcm01,lxrepo01,lxdb01,lxfs01,lxrm0[1,2],lxb00[1-4]
 ```
@@ -36,6 +37,8 @@ gpgkey=https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/SALTST
        https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/base/RPM-GPG-KEY-CentOS-7
 ```
 
+List of required virtual machines and services:
+
 Node         | Description
 -------------|-------------------------------
 lxcm01       | SaltStack master
@@ -45,10 +48,9 @@ lxfs01       | NFS Slurm configuration server
 lxdb01       | MySQL database
 lxb00[1-4]   | Slurm execution nodes
 
-Provision all required virtual machine instances (cf. [clush](https://github.com/vpenso/scripts/blob/master/docs/clush.md)):
+Provision all required virtual machine instances with [vm-tools](https://github.com/vpenso/vm-tools):
 
 ```bash
->>> NODES lxcm01,lxrepo01,lxdb01,lxfs01,lxrm0[1,2],lxb00[1-4]
 # start new VM instances using `centos7` as source image
 >>> vn s centos7
 # clean up everything and start from scratch
@@ -103,7 +105,7 @@ salt-key -d <minion>                    # remove a minion key
 salt-key -a <minion>                    # add a single minion key
 salt <target> test.ping                 # check if a minion repsonds
 salt <target> state.apply               # configure a node
-salt <target> state.applu <sls>         # limit configuration to a single SLS file
+salt <target> state.apply <sls>         # limit configuration to a single SLS file
 salt <target> cmd.run <command> ...     # execute a shell command on nodes
 ```
 
