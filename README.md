@@ -83,6 +83,7 @@ Sync the Salt configuration to the master:
 
 * [srv/salt/](srv/salt/) - The **state tree** includes all SLS (SaLt State file) representing the state in which all nodes should be
 * [etc/salt/master](etc/salt/master) - Salt master configuration (`file_roots` defines to location of the state tree)
+* [srv/salt/top.sls](srv/salt/top.sls) - Maps nodes to SLS configuration files (cf. [top file](https://docs.saltstack.com/en/latest/ref/states/top.html))
 
 ```bash
 # master configuration files
@@ -102,6 +103,7 @@ salt-key -d <minion>                    # remove a minion key
 salt-key -a <minion>                    # add a single minion key
 salt <target> test.ping                 # check if a minion repsonds
 salt <target> state.apply               # configure a node
+salt <target> state.applu <sls>         # limit configuration to a single SLS file
 salt <target> cmd.run <command> ...     # execute a shell command on nodes
 ```
 
