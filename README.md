@@ -91,8 +91,8 @@ Sync the Salt configuration to the master:
 # master configuration files
 >>> vm sy lxcm01 -r $SALTSTACK_EXAMPLE/etc/salt/master :/etc/salt/
 >>> vm sy lxcm01 -r $SALTSTACK_EXAMPLE/srv/salt :/srv/
-# login to the Salt masyer
->>> vm ex lxcm01 -r 
+# login to the Salt master
+>>> vm lo lxcm01 -r
 ```
 
 Commands use on the **master**:
@@ -113,8 +113,9 @@ Commands used on a **minion**:
 
 ```bash
 systemctl restart salt-minion           # restart minion
-/var/log/salt/minion                    # minion log-file
+journalctl -f -u salt-minion            # read the minion log
 salt-minion -l debug                    # start minion in forground
+salt-call -l debug state.highstate      # apply highstate from the client
 ```
 
 
@@ -129,8 +130,9 @@ salt-minion -l debug                    # start minion in forground
 ```bash
 # confgiure the node
 >>> vm ex lxcm01 -r 'salt lxrepo01.devops.test state.apply'
-# upload Slurm RPM packages into the repository
->>> vm sy lxrepo01 -r $HOME/projects/centos7_packages/slurm/17.11.3-2/ :/var/www/html/repo/
+# upload the release package for the OpenHPC project
+>>> wget https://github.com/openhpc/ohpc/releases/download/v1.3.GA/ohpc-release-1.3-2.el7.x86_64.rpm -P /tmp
+>>> vm sy lxrepo01 -r /tmp/ohpc-release-1.3-1.el7.x86_64.rpm :/var/www/html/repo/
 # rebuild the package repository
 >>> vm ex lxrepo01 -r 'createrepo /var/www/html/repo'
 ```

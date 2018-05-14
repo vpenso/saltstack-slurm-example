@@ -1,6 +1,6 @@
 slurmctld_packages:
   pkg.installed:
-    - name: slurm-slurmctld
+    - name: ohpc-slurm-server
 slurmctld_spool:
   file.directory:
     - name: /var/lib/slurm/ctld

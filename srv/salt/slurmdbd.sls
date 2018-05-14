@@ -1,6 +1,6 @@
 slurmdbd_package:
   pkg.installed:
-    - name: slurm-slurmdbd
+    - name: ohpc-slurm-server
 slurmdbd_firewall:
   file.managed: 
     - name: /etc/firewalld/services/slurmdbd.xml

@@ -14,6 +14,7 @@ base:
      - nfsd
   lxrm0[1,2].devops.test:
      - yum
+     - openhpc
      - munge
      - slurm
      - slurm-nfs-conf
@@ -21,6 +22,7 @@ base:
      - slurmctld
   lxb00[1-9].devops.test:
      - yum
+     - openhpc
      - munge
      - slurm
      - slurm-nfs-conf
