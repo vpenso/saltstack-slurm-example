@@ -1,14 +1,20 @@
-# SaltStack Example
+# OpenHPC Slurm Cluster with SaltStack
 
-Build an HPC cluster using the [Slurm](https://slurm.schedmd.com/) workload management system.
+Component | Description
+----------|-------------
+CentOS 7  | operating system
+SaltStack | orchestration (configuration management)
+OpenHPC   | community build HPC packages
+Slurm     | workload management system
+
+<https://www.centos.org/>  
+<https://docs.saltstack.com/en/latest/>  
+<http://www.openhpc.community/>  
+<https://slurm.schedmd.com/>
 
 This example uses virtual machines setup with **vm-tools**:
 
 <https://github.com/vpenso/vm-tools>
-
-This example demonstrates **SaltStack** as a configuration management system:
-
-<https://docs.saltstack.com/en/latest/>
 
 The shell script ↴ [source_me.sh](source_me.sh) adds the tool-chain in this repository to your shell environment:
 
@@ -129,12 +135,14 @@ salt-call -l debug state.highstate      # apply highstate from the client
 
 ```bash
 # confgiure the node
->>> vm ex lxcm01 -r 'salt lxrepo01.devops.test state.apply'
+vm ex lxcm01 -r 'salt lxrepo01.devops.test state.apply'
+# download release packages for EPEL & OpenHPC
+wget https://github.com/openhpc/ohpc/releases/download/v1.3.GA/ohpc-release-1.3-1.el7.x86_64.rpm -P /tmp
+wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -P /tmp
 # upload the release package for the OpenHPC project
->>> wget https://github.com/openhpc/ohpc/releases/download/v1.3.GA/ohpc-release-1.3-2.el7.x86_64.rpm -P /tmp
->>> vm sy lxrepo01 -r /tmp/ohpc-release-1.3-1.el7.x86_64.rpm :/var/www/html/repo/
+vm sy lxrepo01 -r -D /tmp/{ohpc,epel}*.rpm :/var/www/html/repo/
 # rebuild the package repository
->>> vm ex lxrepo01 -r 'createrepo /var/www/html/repo'
+vm ex lxrepo01 -r 'createrepo /var/www/html/repo'
 ```
 
 Nodes using [yum.sls](srv/salt/yum.sls) will us the site repository.

@@ -1,3 +1,3 @@
-ohpc_package:
+ohpc_release_package:
   pkg.installed:
     - name: ohpc-release
