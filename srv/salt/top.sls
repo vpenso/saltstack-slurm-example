@@ -7,10 +7,13 @@ base:
      - yum-mirror
      - yum-repo
   lxdb01.devops.test:
+     - yum
      - epel
      - mariadb
      - slurm-db-access
   lxfs01.devops.test:
+     - yum
+     - openhpc
      - slurm
      - nfsd
   lxrm0[1,2].devops.test:

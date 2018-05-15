@@ -121,7 +121,8 @@ Commands used on a **minion**:
 systemctl restart salt-minion           # restart minion
 journalctl -f -u salt-minion            # read the minion log
 salt-minion -l debug                    # start minion in forground
-salt-call -l debug state.highstate      # apply highstate from the client
+salt-call state.apply <sls>             # limit configuration to a single SLS file
+salt-call -l debug state.apply          # debug minion states
 ```
 
 
@@ -139,7 +140,7 @@ vm ex lxcm01 -r 'salt lxrepo01.devops.test state.apply'
 # download release packages for EPEL & OpenHPC
 wget https://github.com/openhpc/ohpc/releases/download/v1.3.GA/ohpc-release-1.3-1.el7.x86_64.rpm -P /tmp
 wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -P /tmp
-# upload the release package for the OpenHPC project
+# upload the release package to the package repository
 vm sy lxrepo01 -r -D /tmp/{ohpc,epel}*.rpm :/var/www/html/repo/
 # rebuild the package repository
 vm ex lxrepo01 -r 'createrepo /var/www/html/repo'
@@ -173,12 +174,12 @@ Unfortunately `slurm-db-access.sls` is not working as expected, you may need to 
 ```bash
 >>> vm ex lxdb01 -r mysql
 # ..configure ...
-mysql> grant all on slurm_acct_db.* TO 'slurm'@'localhost' identified by '12345678' with grant option;
-mysql> grant all on slurm_acct_db.* TO 'slurm'@'lxrm01' identified by '12345678' with grant option;
-mysql> grant all on slurm_acct_db.* TO 'slurm'@'lxrm01.devops.test' identified by '12345678' with grant option;
-mysql> grant all on slurm_acct_db.* TO 'slurm'@'lxrm02' identified by '12345678' with grant option;
-mysql> grant all on slurm_acct_db.* TO 'slurm'@'lxrm02.devops.test' identified by '12345678' with grant option;
-mysql> quit
+grant all on slurm_acct_db.* TO 'slurm'@'localhost' identified by '12345678' with grant option;
+grant all on slurm_acct_db.* TO 'slurm'@'lxrm01' identified by '12345678' with grant option;
+grant all on slurm_acct_db.* TO 'slurm'@'lxrm01.devops.test' identified by '12345678' with grant option;
+grant all on slurm_acct_db.* TO 'slurm'@'lxrm02' identified by '12345678' with grant option;
+grant all on slurm_acct_db.* TO 'slurm'@'lxrm02.devops.test' identified by '12345678' with grant option;
+quit
 ```
 
 
@@ -224,7 +225,7 @@ Configure the Slurm accounting database:
 # register the new cluster
 >>> vm ex lxrm01 -r 'sacctmgr -i add cluster vega'
 # start the SLURM cluster controllers
->>> NODES=lxrm0[1,2] vn ex 'systemctl restart slurmctld`
+>>> NODES=lxrm0[1,2] vn ex 'systemctl restart slurmctld'
 # check the Slurm parition state
 >>> vm ex lxrm01 -r 'sinfo'
 ```

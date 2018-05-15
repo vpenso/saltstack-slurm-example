@@ -1,9 +1,9 @@
 slurmctld_packages:
   pkg.installed:
-    - name: ohpc-slurm-server
+    - name: slurm-slurmctld-ohpc
 slurmctld_spool:
   file.directory:
-    - name: /var/lib/slurm/ctld
+    - name: /var/spool/slurm/ctld
     - user: slurm
 slurmctld_nfs_spool:
   file.managed:

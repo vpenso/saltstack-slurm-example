@@ -1,6 +1,6 @@
 munge_package:
   pkg.installed:
-    - name: munge
+    - name: munge-ohpc
 munge_key:
   file.managed:
     - name: /etc/munge/munge.key

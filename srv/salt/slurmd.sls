@@ -1,6 +1,6 @@
 slurmd_package:
   pkg.installed:
-   - name: slurm-slurmd
+   - name: slurm-slurmd-ohpc
 slurmd_spool:
   file.directory:
     - name: /var/spool/slurm/d
