@@ -95,10 +95,10 @@ Sync the Salt configuration to the master:
 
 ```bash
 # master configuration files
->>> vm sy lxcm01 -r $SALTSTACK_EXAMPLE/etc/salt/master :/etc/salt/
->>> vm sy lxcm01 -r $SALTSTACK_EXAMPLE/srv/salt :/srv/
-# login to the Salt master
->>> vm lo lxcm01 -r
+vm sy lxcm01 -r $SALTSTACK_EXAMPLE/etc/salt/master :/etc/salt/
+vm sy lxcm01 -r $SALTSTACK_EXAMPLE/srv/salt :/srv/
+# accept all Salt minions
+vm ex lxcm01 -r 'systemctl restart salt-master ; salt-key -A -y'
 ```
 
 Commands use on the **master**:
@@ -135,7 +135,7 @@ salt-call -l debug state.apply          # debug minion states
 |         | [yum-repo.sls](srv/salt/yum-repo.sls)     | Configure a package repository for custom RPMs     |
 
 ```bash
-# confgiure the node
+# configure the node
 vm ex lxcm01 -r 'salt lxrepo01.devops.test state.apply'
 # download release packages for EPEL & OpenHPC
 wget https://github.com/openhpc/ohpc/releases/download/v1.3.GA/ohpc-release-1.3-1.el7.x86_64.rpm -P /tmp
@@ -193,12 +193,14 @@ lxfs01   | [nfsd.sls](srv/salt/nfsd.sls)             | NFS server for the Slurm 
 # configure the database server
 >>> vm ex lxcm01 -r 'salt lxfs01* state.apply'
 # check the exports
->>> vm ex lxcm01 -r 'salt lxfs01* cmd.run exportfs'
+>>> vm ex lxcm01 -r salt `lxfs01*` cmd.run exportfs
 lxfs01.devops.test:
     /etc/slurm          lxrm*
     /etc/slurm          lx*
     /var/spool/slurm
                 lxrm*
+# or using an execution module
+>>> vm ex lxcm01 -r salt 'lxfs*' nfs3.list_exports
 # upload the common Slurm configuration to the NFS server
 >>> vm sy lxfs01 -r $SALTSTACK_EXAMPLE/etc/slurm/ :/etc/slurm
 ```
@@ -216,18 +218,18 @@ lxfs01.devops.test:
 # configure the Slurm master and slave 
 >>> vm ex lxcm01 -r 'salt lxrm0* state.apply'
 # check the service daemons
->>> NODES=lxrm0[1,2] vn ex 'systemctl status slurmctld slurmdbd'
+>>> vm ex lxcm01 -r salt 'lxrm*' service.status 'slurm*'
 ```
 
 Configure the Slurm accounting database:
 
 ```bash
 # register the new cluster
->>> vm ex lxrm01 -r 'sacctmgr -i add cluster vega'
-# start the SLURM cluster controllers
->>> NODES=lxrm0[1,2] vn ex 'systemctl restart slurmctld'
+>>> vm ex lxrm01 -r -- sacctmgr -i add cluster vega
+# restart the SLURM cluster controllers
+>>> vm ex lxcm01 -r salt 'lxrm*' service.restart slurmctld
 # check the Slurm parition state
->>> vm ex lxrm01 -r 'sinfo'
+>>> vm ex lxrm01 -r sinfo
 ```
 
 Manage the account DB configuration with the file [accounts.conf](etc/slurm/accounts.conf):
