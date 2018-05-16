@@ -302,6 +302,7 @@ Configure the Prometheus server:
  Node     | SLS                                       | Description
 ----------|-------------------------------------------|--------------------------------
  lxmon01  | [prometheus.sls](srv/salt/prometheus.sls) | Prometheus server configuration
+ *        | [prometheus-node-exporter.sls](srv/salt/prometheus-node-exporter.sls) | Nodes exposing monitoring metrics
 
 ```bash
 # download the packages from packagecloud
