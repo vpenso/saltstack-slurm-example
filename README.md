@@ -265,3 +265,20 @@ Configuration
 # configure the database server
 >>> vm ex lxcm01 -r -- salt -t 300 'lxb*' state.apply
 ```
+
+Install user application software:
+
+```bash
+>>> vm lo lxrm01 -r
+# install packages for user applications
+>>> salt --async 'lxb*' state.apply users-packages
+Executed command with job ID: 20180516114005041992
+# show the corresponding job
+>>> salt-run jobs.print_job 20180516114005041992
+# list running jobs
+>>> salt-run jobs.active
+# check if the job has finished successful
+>>> salt-run jobs.exit_success 20180516114005041992
+# kill the job on the nodes...
+>>> salt 'lxb*' saltutil.kill_job 20180516114005041992
+```
