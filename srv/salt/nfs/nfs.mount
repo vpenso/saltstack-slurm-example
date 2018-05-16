@@ -1,0 +1,12 @@
+[Unit]
+Description=Mount NFS shared storage
+Wants=network-online.target
+After=network-online.target
+[Mount]
+What=lxfs01.devops.test:/nfs
+Where=/nfs
+Type=nfs
+Options=ro,nosuid
+TimeoutSec=10s
+[Install]
+WantedBy=multi-user.target

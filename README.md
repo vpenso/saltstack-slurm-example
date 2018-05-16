@@ -90,8 +90,9 @@ Sync the Salt configuration to the master:
 * [srv/salt/top.sls](srv/salt/top.sls) - Maps nodes to SLS configuration files (cf. [top file](https://docs.saltstack.com/en/latest/ref/states/top.html))
 
 ```bash
-# master configuration files
+# upload the salt-master service configuration files
 vm sy lxcm01 -r $SALTSTACK_EXAMPLE/etc/salt/master :/etc/salt/
+# upload the salt configuration reposiotry
 vm sy lxcm01 -r $SALTSTACK_EXAMPLE/srv/salt :/srv/
 # accept all Salt minions
 vm ex lxcm01 -r 'systemctl restart salt-master ; salt-key -A -y'
@@ -196,20 +197,21 @@ lxfs01   | [nfsd.sls](srv/salt/nfsd.sls)             | NFS server for the Slurm 
 
 NFS exports:
 
-Path               | Description
--------------------|-------------------------------
-`/etc/slurm`       | Slurm configuration (required on `lx{b,rm}*`)
-`/var/spool/slurm` | Slurm controller master/slave state (required on `lxrm*`)
-`/nfs`             | Shared cluster storage (required on `lxb*`)
+Path             | Description
+-----------------|-------------------------------
+/etc/slurm       | Slurm configuration (required on `lx{b,rm}*`)
+/var/spool/slurm | Slurm controller master/slave state (required on `lxrm*`)
+/nfs             | Shared cluster storage (required on `lxb*`)
 
 ```bash
 # check the exports
->>> vm ex lxcm01 -r salt `lxfs01*` cmd.run exportfs
+>>> vm ex lxcm01 -r salt lxfs\* cmd.run exportfs  
 lxfs01.devops.test:
     /etc/slurm          lxrm*
     /etc/slurm          lx*
     /var/spool/slurm
                 lxrm*
+    /nfs                lx*
 # or using a Salt execution module
 >>> vm ex lxcm01 -r salt 'lxfs*' nfs3.list_exports
 ```
@@ -230,7 +232,7 @@ lxfs01.devops.test:
 
 ```bash
 # configure the Slurm master and slave 
->>> vm ex lxcm01 -r 'salt lxrm0* state.apply'
+>>> vm ex lxcm01 -r -- salt -t 300 'lxrm*' state.apply
 # check the service daemons
 >>> vm ex lxcm01 -r salt 'lxrm*' service.status 'slurm*'
 ```
@@ -251,10 +253,12 @@ Manage the account DB configuration with the file [accounts.conf](etc/slurm/acco
 ```bash
 # load the account configuration
 >>> vm sy lxrm01 -r $SALTSTACK_EXAMPLE/etc/slurm/accounts.conf :/tmp
->>> vm ex lxrm01 -r 'sacctmgr --immediate load /tmp/accounts.conf'
+>>> vm ex lxrm01 -r -- sacctmgr --immediate load /tmp/accounts.conf
 ```
 
 ### Slurm Execution Nodes
+
+Configuration
 
 | Node       | SLS                                      | Description                                        |
 |------------|------------------------------------------|----------------------------------------------------|
@@ -262,5 +266,5 @@ Manage the account DB configuration with the file [accounts.conf](etc/slurm/acco
 
 ```bash
 # configure the database server
->>> vm ex lxcm01 -r 'salt lxb* state.apply'
+>>> vm ex lxcm01 -r -- salt -t 300 'lxb*' state.apply
 ```

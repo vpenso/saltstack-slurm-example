@@ -21,7 +21,7 @@ base:
      - openhpc
      - munge
      - slurm
-     - slurm-nfs-conf
+     - slurm-nfs
      - slurmdbd
      - slurmctld
   lxb00[1-9].devops.test:
@@ -29,5 +29,6 @@ base:
      - openhpc
      - munge
      - slurm
-     - slurm-nfs-conf
+     - slurm-nfs
      - slurmd
+     - nfs
