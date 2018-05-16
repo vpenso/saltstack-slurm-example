@@ -217,7 +217,7 @@ Slurm cluster configuration files in [etc/slurm](etc/slurm)
 
 ```bash
 # upload the common Slurm configuration to the NFS server
->>> vm sy lxfs01 -r $SALTSTACK_EXAMPLE/etc/slurm/ :/etc/slurm
+vm sy lxfs01 -r $SALTSTACK_EXAMPLE/etc/slurm/ :/etc/slurm
 ```
 
 ### Slurm Workload Manager
@@ -229,28 +229,28 @@ Slurm cluster configuration files in [etc/slurm](etc/slurm)
 
 ```bash
 # configure the Slurm master and slave 
->>> vm ex lxcm01 -r -- salt -t 300 'lxrm*' state.apply
+vm ex lxcm01 -r -- salt -t 300 'lxrm*' state.apply
 # check the service daemons
->>> vm ex lxcm01 -r salt 'lxrm*' service.status 'slurm*'
+vm ex lxcm01 -r salt 'lxrm*' service.status 'slurm*'
 ```
 
 Configure the Slurm accounting database:
 
 ```bash
 # register the new cluster
->>> vm ex lxrm01 -r -- sacctmgr -i add cluster vega
+vm ex lxrm01 -r -- sacctmgr -i add cluster vega
 # restart the SLURM cluster controllers
->>> vm ex lxcm01 -r salt 'lxrm*' service.restart slurmctld
+vm ex lxcm01 -r salt 'lxrm*' service.restart slurmctld
 # check the Slurm parition state
->>> vm ex lxrm01 -r sinfo
+vm ex lxrm01 -r sinfo
 ```
 
 Manage the account DB configuration with the file [accounts.conf](etc/slurm/accounts.conf):
 
 ```bash
 # load the account configuration
->>> vm sy lxrm01 -r $SALTSTACK_EXAMPLE/etc/slurm/accounts.conf :/tmp
->>> vm ex lxrm01 -r -- sacctmgr --immediate load /tmp/accounts.conf
+vm sy lxrm01 -r $SALTSTACK_EXAMPLE/etc/slurm/accounts.conf :/tmp
+vm ex lxrm01 -r -- sacctmgr --immediate load /tmp/accounts.conf
 ```
 
 ### Slurm Execution Nodes
@@ -263,23 +263,22 @@ Configuration
 
 ```bash
 # configure the database server
->>> vm ex lxcm01 -r -- salt -t 300 'lxb*' state.apply
+vm ex lxcm01 -r -- salt -t 300 'lxb*' state.apply
 ```
 
 Install user application software:
 
 ```bash
 # login to the salt master
->>> vm lo lxcm01 -r
+vm lo lxcm01 -r
 # span a job to support install packages for user applications
->>> jid=$(salt --async 'lxb*' state.apply users-packages | cut -d: -f2) && echo $jid
+jid=$(salt --async 'lxb*' state.apply users-packages | cut -d: -f2) && echo $jid
 # list running jobs
->>> salt-run jobs.active
-Executed command with job ID: 20180516114005041992
+salt-run jobs.active
 # show the corresponding job
->>> salt-run jobs.print_job $jid
+salt-run jobs.print_job $jid
 # check if the job has finished successful
->>> salt-run jobs.exit_success $jid
+salt-run jobs.exit_success $jid
 # kill the job on the nodes...
->>> salt 'lxb*' saltutil.kill_job $jid
+salt 'lxb*' saltutil.kill_job $jid
 ```
