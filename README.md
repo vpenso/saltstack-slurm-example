@@ -109,6 +109,8 @@ salt <target> test.ping                 # check if a minion repsonds
 salt <target> state.apply               # configure a node
 salt <target> state.apply <sls>         # limit configuration to a single SLS file
 salt <target> cmd.run <command> ...     # execute a shell command on nodes
+salt-run jobs.active                    # list active jobs
+salt-run jobs.exit_success <jid>        # check if a job has finished
 ```
 
 Commands used on a **minion**:
@@ -188,10 +190,9 @@ Nodes    | SLS                                       | Description
 lxfs01   | [nfsd.sls](srv/salt/nfsd.sls)             | NFS server for the Slurm configuration & state
 
 ```bash
-# configure the database server
->>> vm ex lxcm01 -r 'salt lxfs01* state.apply'
+# configure the NFS server
+>>> vm ex lxcm01 -r -- salt -t 120 lxfs01\* state.apply
 ```
-
 
 NFS exports:
 
@@ -209,7 +210,7 @@ lxfs01.devops.test:
     /etc/slurm          lx*
     /var/spool/slurm
                 lxrm*
-# or using an execution module
+# or using a Salt execution module
 >>> vm ex lxcm01 -r salt 'lxfs*' nfs3.list_exports
 ```
 
