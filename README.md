@@ -61,9 +61,7 @@ Provision all required virtual machine instances with [vm-tools](https://github.
 
 ### Deployment
 
-Install Saltstack on all nodes:
-
-Cf. <https://docs.saltstack.com/en/latest/ref/configuration/index.html>
+Install Saltstack on all nodes (cf. [Salt configuration](https://docs.saltstack.com/en/latest/ref/configuration/index.html)):
 
 ```bash
 # install the SaltStack master
@@ -205,6 +203,13 @@ lxfs01.devops.test:
 >>> vm ex lxcm01 -r salt 'lxfs*' nfs3.list_exports
 ```
 
+Slurm cluster configuration files in [etc/slurm](etc/slurm)
+
+```bash
+# upload the common Slurm configuration to the NFS server
+vm sy lxfs01 -r $SALTSTACK_EXAMPLE/etc/slurm/ :/etc/slurm
+```
+
 NFS client configuration:
 
 Node                  | SLS                                      | Path             | Description
@@ -213,12 +218,11 @@ lxb00[1-4],lxrm0[1,2] | [slurm-nfs.sls](srv/salt/slurm-nfs.sls)  | /etc/slurm   
 lxrm0[1,2]            |                                          | /var/spool/slurm | Slurm controller state (master/slave)
 lxb00[1-4]            | [nfs.sls](srv/salt/nfs.sls)              | /nfs             | Shared cluster storage
 
-Slurm cluster configuration files in [etc/slurm](etc/slurm)
-
 ```bash
-# upload the common Slurm configuration to the NFS server
-vm sy lxfs01 -r $SALTSTACK_EXAMPLE/etc/slurm/ :/etc/slurm
+# list all required mounts in the infrastructure 
+vm ex lxcm01 -r -- salt "'*'" mount.active | grep -e lx -e slurm -e nfs
 ```
+
 
 ### Slurm Workload Manager
 
