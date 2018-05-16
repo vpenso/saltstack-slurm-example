@@ -184,7 +184,7 @@ quit
 
 ### NFS Server
 
-Configuration:
+NFS server configuration:
 
 Nodes    | SLS                                       | Description
 ---------|-------------------------------------------|----------------------------------------------------
@@ -193,17 +193,6 @@ lxfs01   | [nfsd.sls](srv/salt/nfsd.sls)             | NFS server for the Slurm 
 ```bash
 # configure the NFS server
 >>> vm ex lxcm01 -r -- salt -t 120 lxfs01\* state.apply
-```
-
-NFS exports:
-
-Path             | Description
------------------|-------------------------------
-/etc/slurm       | Slurm configuration (required on `lx{b,rm}*`)
-/var/spool/slurm | Slurm controller master/slave state (required on `lxrm*`)
-/nfs             | Shared cluster storage (required on `lxb*`)
-
-```bash
 # check the exports
 >>> vm ex lxcm01 -r salt lxfs\* cmd.run exportfs  
 lxfs01.devops.test:
@@ -216,7 +205,15 @@ lxfs01.devops.test:
 >>> vm ex lxcm01 -r salt 'lxfs*' nfs3.list_exports
 ```
 
-[etc/slurm](etc/slurm) - Slurm cluster configuration files 
+NFS client configuration:
+
+Node                  | SLS                                      | Path             | Description
+----------------------|------------------------------------------|------------------|-------------------------------
+lxb00[1-4],lxrm0[1,2] | [slurm-nfs.sls](srv/salt/slurm-nfs.sls)  | /etc/slurm       | Slurm configuration
+lxrm0[1,2]            |                                          | /var/spool/slurm | Slurm controller state (master/slave)
+lxb00[1-4]            | [nfs.sls](srv/salt/nfs.sls)              | /nfs             | Shared cluster storage
+
+Slurm cluster configuration files in [etc/slurm](etc/slurm)
 
 ```bash
 # upload the common Slurm configuration to the NFS server
