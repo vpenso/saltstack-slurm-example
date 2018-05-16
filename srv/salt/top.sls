@@ -21,6 +21,7 @@ base:
   lxmon01.devops.test:
      - yum
      - prometheus
+     - prometheus-node-exporter
   lxrm0[1,2].devops.test:
      - yum
      - openhpc

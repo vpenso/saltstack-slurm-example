@@ -2,7 +2,6 @@ prometheus_package:
   pkg.installed:
     - pkgs:
       - prometheus2
-      - node_exporter
 prometheus_config:
   file.managed:
     - name: /etc/prometheus/prometheus.yml
