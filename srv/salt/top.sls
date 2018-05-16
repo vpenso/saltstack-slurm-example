@@ -18,6 +18,9 @@ base:
      - users
      - users-home
      - slurm
+  lxmon01.devops.test:
+     - yum
+     - prometheus
   lxrm0[1,2].devops.test:
      - yum
      - openhpc

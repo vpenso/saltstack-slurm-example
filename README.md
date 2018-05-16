@@ -1,12 +1,13 @@
 # OpenHPC Slurm Cluster with SaltStack
 
-Component | Description                    | Cf.
-----------|--------------------------------|-----------------------
-CentOS 7  | Operating system               | <https://www.centos.org/>
-SaltStack | Infrastructure orchestration   | <https://saltstack.com/>
-EPEL      | Fedora community packages      | <https://fedoraproject.org/wiki/EPEL>
-OpenHPC   | Community HPC packages         | <http://www.openhpc.community/>
-Slurm     | Workload management system     | <https://slurm.schedmd.com/>
+Component  | Description                   | Cf.
+-----------|-------------------------------|-----------------------
+CentOS 7   | Operating system              | <https://www.centos.org/>
+SaltStack  | Infrastructure orchestration  | <https://saltstack.com/>
+EPEL       | Fedora community packages     | <https://fedoraproject.org/wiki/EPEL>
+OpenHPC    | Community HPC packages        | <http://www.openhpc.community/>
+Slurm      | Workload management system    | <https://slurm.schedmd.com/>
+Prometheus | Monitor service               | <https://prometheus.io/>
 
 This example uses virtual machines setup with **vm-tools**:
 
@@ -48,6 +49,7 @@ lxrepo01     | CentOS 7 package mirror & site repo
 lxrm0[1,2]   | Slurm master/slave
 lxfs01       | NFS Slurm configuration server
 lxdb01       | MySQL database
+lxmon01      | Prometheus monitoring server
 lxb00[1-4]   | Slurm execution nodes
 
 Provision all required virtual machine instances with [vm-tools](https://github.com/vpenso/vm-tools):
@@ -269,7 +271,7 @@ Configuration
 | lxb0[1-4]  | [slurmd.sls](srv/salt/slurmd.sls)        | Slurm execution node daemon                        |
 
 ```bash
-# configure the database server
+# configure all Slurm execution nodes
 vm ex lxcm01 -r -- salt -t 300 'lxb*' state.apply
 ```
 
@@ -278,7 +280,7 @@ Install user application software (cf. [Salt Job Management](https://docs.saltst
 ```bash
 # login to the salt master
 vm lo lxcm01 -r
-# span a job to support install packages for user applications
+# span a job to install packages required for user applications
 jid=$(salt --async 'lxb*' state.apply users-packages | cut -d: -f2) && echo $jid
 # list running jobs
 salt-run jobs.active
@@ -288,4 +290,30 @@ salt-run jobs.print_job $jid
 salt-run jobs.exit_success $jid
 # kill the job on the nodes...
 salt 'lxb*' saltutil.kill_job $jid
+```
+
+### Prometheus
+
+<https://github.com/lest/prometheus-rpm>  
+<https://packagecloud.io/prometheus-rpm>
+
+Configure the Prometheus server:
+
+ Node     | SLS                                       | Description
+----------|-------------------------------------------|--------------------------------
+ lxmon01  | [prometheus.sls](srv/salt/prometheus.sls) | Prometheus server configuration
+
+```bash
+# download the packages from packagecloud
+wget --content-disposition https://packagecloud.io/prometheus-rpm/release/packages/el/7/prometheus2-2.2.1-1.el7.centos.x86_64.rpm/download.rpm -P /tmp
+wget --content-disposition https://packagecloud.io/prometheus-rpm/release/packages/el/7/node_exporter-0.15.2-1.el7.centos.x86_64.rpm/download.rpm -P /tmp
+# upload the packages to the local repository
+vm sy lxrepo01 -r -D /tmp/{prom,node}*.rpm :/var/www/html/repo/
+vm ex lxrepo01 -r createrepo /var/www/html/repo
+# configure the Promehteus server 
+vm ex lxcm01 -r salt 'lxmon*' state.apply
+# open the Prometheus metrics page in your default browser
+$BROWSER http://$(virsh-nat-bridge lo lxmon01 | cut -d' ' -f2):9090/metrics
+# open the expression browser
+$BROWSER http://$(virsh-nat-bridge lo lxmon01 | cut -d' ' -f2):9090/graph
 ```
