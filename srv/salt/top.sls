@@ -14,11 +14,14 @@ base:
   lxfs01.devops.test:
      - yum
      - openhpc
-     - slurm
      - nfsd
+     - users
+     - users-home
+     - slurm
   lxrm0[1,2].devops.test:
      - yum
      - openhpc
+     - users
      - munge
      - slurm
      - slurm-nfs
@@ -27,6 +30,7 @@ base:
   lxb00[1-9].devops.test:
      - yum
      - openhpc
+     - users
      - munge
      - slurm
      - slurm-nfs

@@ -182,7 +182,7 @@ quit
 ```
 
 
-### NFS Server
+### NFS Storage
 
 NFS server configuration:
 
