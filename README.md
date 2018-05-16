@@ -2,11 +2,11 @@
 
 Component | Description                    | Cf.
 ----------|--------------------------------|-----------------------
-CentOS 7  | operating system               | <https://www.centos.org/>
-SaltStack | infrastructure management      | <https://saltstack.com/>
-EPEL      | Fedora extra packages          | <https://fedoraproject.org/wiki/EPEL>
-OpenHPC   | community build HPC packages   | <http://www.openhpc.community/>
-Slurm     | workload management system     | <https://slurm.schedmd.com/>
+CentOS 7  | Operating system               | <https://www.centos.org/>
+SaltStack | Infrastructure orchestration   | <https://saltstack.com/>
+EPEL      | Fedora community packages      | <https://fedoraproject.org/wiki/EPEL>
+OpenHPC   | Community HPC packages         | <http://www.openhpc.community/>
+Slurm     | Workload management system     | <https://slurm.schedmd.com/>
 
 This example uses virtual machines setup with **vm-tools**:
 
@@ -245,7 +245,7 @@ vm ex lxcm01 -r salt 'lxrm*' service.restart slurmctld
 vm ex lxrm01 -r sinfo
 ```
 
-Manage the account DB configuration with the file [accounts.conf](etc/slurm/accounts.conf):
+Manage the account DB configuration with the file [etc/slurm/accounts.conf](etc/slurm/accounts.conf):
 
 ```bash
 # load the account configuration
@@ -266,7 +266,7 @@ Configuration
 vm ex lxcm01 -r -- salt -t 300 'lxb*' state.apply
 ```
 
-Install user application software:
+Install user application software (cf. [Salt Job Management](https://docs.saltstack.com/en/latest/topics/jobs/index.html)):
 
 ```bash
 # login to the salt master
