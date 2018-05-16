@@ -1,16 +1,12 @@
 # OpenHPC Slurm Cluster with SaltStack
 
-Component | Description
-----------|-------------
-CentOS 7  | operating system
-SaltStack | orchestration (configuration management)
-OpenHPC   | community build HPC packages
-Slurm     | workload management system
-
-<https://www.centos.org/>  
-<https://docs.saltstack.com/en/latest/>  
-<http://www.openhpc.community/>  
-<https://slurm.schedmd.com/>
+Component | Description                    | Cf.
+----------|--------------------------------|-----------------------
+CentOS 7  | operating system               | <https://www.centos.org/>
+SaltStack | infrastructure management      | <https://saltstack.com/>
+EPEL      | Fedora extra packages          | <https://fedoraproject.org/wiki/EPEL>
+OpenHPC   | community build HPC packages   | <http://www.openhpc.community/>
+Slurm     | workload management system     | <https://slurm.schedmd.com/>
 
 This example uses virtual machines setup with **vm-tools**:
 
@@ -185,6 +181,8 @@ quit
 
 ### NFS Server
 
+Configuration:
+
 Nodes    | SLS                                       | Description
 ---------|-------------------------------------------|----------------------------------------------------
 lxfs01   | [nfsd.sls](srv/salt/nfsd.sls)             | NFS server for the Slurm configuration & state
@@ -192,6 +190,18 @@ lxfs01   | [nfsd.sls](srv/salt/nfsd.sls)             | NFS server for the Slurm 
 ```bash
 # configure the database server
 >>> vm ex lxcm01 -r 'salt lxfs01* state.apply'
+```
+
+
+NFS exports:
+
+Path               | Description
+-------------------|-------------------------------
+`/etc/slurm`       | Slurm configuration (required on `lx{b,rm}*`)
+`/var/spool/slurm` | Slurm controller master/slave state (required on `lxrm*`)
+`/nfs`             | Shared cluster storage (required on `lxb*`)
+
+```bash
 # check the exports
 >>> vm ex lxcm01 -r salt `lxfs01*` cmd.run exportfs
 lxfs01.devops.test:
@@ -201,11 +211,14 @@ lxfs01.devops.test:
                 lxrm*
 # or using an execution module
 >>> vm ex lxcm01 -r salt 'lxfs*' nfs3.list_exports
-# upload the common Slurm configuration to the NFS server
->>> vm sy lxfs01 -r $SALTSTACK_EXAMPLE/etc/slurm/ :/etc/slurm
 ```
 
 [etc/slurm](etc/slurm) - Slurm cluster configuration files 
+
+```bash
+# upload the common Slurm configuration to the NFS server
+>>> vm sy lxfs01 -r $SALTSTACK_EXAMPLE/etc/slurm/ :/etc/slurm
+```
 
 ### Slurm Workload Manager
 

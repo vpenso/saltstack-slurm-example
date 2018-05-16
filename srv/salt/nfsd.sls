@@ -1,7 +1,7 @@
 nfsd_package:
   pkg.installed:
     - name: nfs-utils
-{% for path in '/etc/slurm','/var/spool/slurm' %}
+{% for path in '/etc/slurm','/nfs','/var/spool/slurm' %}
 nfsd_export_path_{{ path }}:
   file.directory:
     - name: {{ path }}
@@ -23,6 +23,7 @@ nfsd_exports:
     - contents: |
         /etc/slurm lxrm*(rw,sync,no_subtree_check) lx*(ro,sync,no_subtree_check)
         /var/spool/slurm lxrm*(rw,sync)
+        /nfs lx*(rw)
   service.running:
     - name: nfs-server.service
     - enable: True
