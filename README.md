@@ -269,16 +269,17 @@ Configuration
 Install user application software:
 
 ```bash
->>> vm lo lxrm01 -r
-# install packages for user applications
->>> salt --async 'lxb*' state.apply users-packages
-Executed command with job ID: 20180516114005041992
-# show the corresponding job
->>> salt-run jobs.print_job 20180516114005041992
+# login to the salt master
+>>> vm lo lxcm01 -r
+# span a job to support install packages for user applications
+>>> jid=$(salt --async 'lxb*' state.apply users-packages | cut -d: -f2) && echo $jid
 # list running jobs
 >>> salt-run jobs.active
+Executed command with job ID: 20180516114005041992
+# show the corresponding job
+>>> salt-run jobs.print_job $jid
 # check if the job has finished successful
->>> salt-run jobs.exit_success 20180516114005041992
+>>> salt-run jobs.exit_success $jid
 # kill the job on the nodes...
->>> salt 'lxb*' saltutil.kill_job 20180516114005041992
+>>> salt 'lxb*' saltutil.kill_job $jid
 ```
