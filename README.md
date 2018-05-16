@@ -126,11 +126,11 @@ salt-call -l debug state.apply          # debug minion states
 ### Package Mirror & Site Repository
 
 
-|Nodes    | SLS                                       | Description                                        |
-|---------|-------------------------------------------|----------------------------------------------------|
-|lxrepo01 | [yum-mirror.sls](srv/salt/yum-mirror.sls) | Configure a CentOS 7 package mirror                |
-|         | [yum-repo.sls](srv/salt/yum-repo.sls)     | Configure a package repository for custom RPMs     |
-
+| Nodes    | SLS                                       | Description                                        |
+|----------|-------------------------------------------|----------------------------------------------------|
+| lxrepo01 | [yum-mirror.sls](srv/salt/yum-mirror.sls) | Configure a CentOS 7 package mirror                |
+| lxrepo01 | [yum-repo.sls](srv/salt/yum-repo.sls)     | Configure a package repository for custom RPMs     |
+| *        | [yum.sls](srv/salt/yum.sls)               | Nodes using the local mirror & repo
 ```bash
 # configure the node
 vm ex lxcm01 -r 'salt lxrepo01.devops.test state.apply'
@@ -143,7 +143,10 @@ vm sy lxrepo01 -r -D /tmp/{ohpc,epel}*.rpm :/var/www/html/repo/
 vm ex lxrepo01 -r 'createrepo /var/www/html/repo'
 ```
 
-Nodes using [yum.sls](srv/salt/yum.sls) will us the site repository.
+```bash
+# show the local package mirror & repo with your default web-browser
+for url in centos repo ; do $BROWSER http://$(virsh-nat-bridge lo lxrepo01 | cut -d' ' -f2)/$url ; done
+```
 
 ### SQL Database
 
