@@ -1,5 +1,7 @@
 # OpenHPC Slurm Cluster with SaltStack
 
+Build a HPC Cluster using the following infrastructure components:
+
 Component  | Description                   | Cf.
 -----------|-------------------------------|-----------------------
 CentOS 7   | Operating system              | <https://www.centos.org/>
@@ -27,9 +29,9 @@ lxcm01,lxrepo01,lxdb01,lxfs01,lxrm0[1,2],lxb00[1-4]
 
 ### Prerequisites
 
-Include the SaltStack package repository to the **CentOS** virtual machine image:
+Include the [SaltStack package repository][spr] to the **CentOS** virtual machine image:
 
-<https://docs.saltstack.com/en/latest/topics/installation/rhel.html>
+[spr]: https://docs.saltstack.com/en/latest/topics/installation/rhel.html
 
 ```bash
 >>> cat /etc/yum.repos.d/salt.repo
@@ -351,3 +353,19 @@ Cf. [Grafana Configuration](http://docs.grafana.org/installation/configuration/)
 * Prometheus is configured as data-source with [prometheus.yml](srv/salt/grafana/prometheus.yml)
 * Import one of the node exporter dashboards, i.e. ID:[1860](https://grafana.com/dashboards/1860)
 
+## Usage
+
+Run an example MPI application
+
+```bash
+# login as a user to an execution node
+vm lo lxb001 -r su sulu
+# compile a sample MPI program
+mpicc -O3 /opt/ohpc/pub/examples/mpi/hello.c -o /nfs/sulu/hello
+# allocate two nodes
+salloc -N 2 /bin/bash
+# run the MPI application
+srun --mpi pmix /nfs/sulu/hello
+# or 
+prun /nfs/sulu/hello
+```

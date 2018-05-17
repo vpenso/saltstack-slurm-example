@@ -6,7 +6,7 @@ After=network-online.target
 What=lxfs01.devops.test:/nfs
 Where=/nfs
 Type=nfs
-Options=ro,nosuid
+Options=rw,nosuid
 TimeoutSec=10s
 [Install]
 WantedBy=multi-user.target
