@@ -20,6 +20,7 @@ base:
   lxmon01.devops.test:
      - prometheus
      - prometheus-node-exporter
+     - grafana
   lxrm0[1,2].devops.test:
      - openhpc
      - users

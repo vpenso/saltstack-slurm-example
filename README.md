@@ -6,8 +6,10 @@ CentOS 7   | Operating system              | <https://www.centos.org/>
 SaltStack  | Infrastructure orchestration  | <https://saltstack.com/>
 EPEL       | Fedora community packages     | <https://fedoraproject.org/wiki/EPEL>
 OpenHPC    | Community HPC packages        | <http://www.openhpc.community/>
+MariaDB    | Relational database           | <https://mariadb.org/>
 Slurm      | Workload management system    | <https://slurm.schedmd.com/>
-Prometheus | Monitor service               | <https://prometheus.io/>
+Prometheus | Time-series database          | <https://prometheus.io/>
+Grafana    | Monitoring dashboard          | <https://grafana.com/>
 
 This example uses virtual machines setup with **vm-tools**:
 
@@ -229,7 +231,9 @@ vm ex lxcm01 -r -- salt "'*'" mount.active | grep -e lx -e slurm -e nfs
 ```
 
 
-### Slurm Workload Manager
+### Workload Manager
+
+Slurm **Controller** (master/slave) configuration; 
 
 | Node       | SLS                                      | Description                                        |
 |------------|------------------------------------------|----------------------------------------------------|
@@ -262,9 +266,7 @@ vm sy lxrm01 -r $SALTSTACK_EXAMPLE/etc/slurm/accounts.conf :/tmp
 vm ex lxrm01 -r -- sacctmgr --immediate load /tmp/accounts.conf
 ```
 
-### Slurm Execution Nodes
-
-Configuration
+Slurm **executuion nodes** configuration:
 
 | Node       | SLS                                      | Description                                        |
 |------------|------------------------------------------|----------------------------------------------------|
@@ -292,12 +294,24 @@ salt-run jobs.exit_success $jid
 salt 'lxb*' saltutil.kill_job $jid
 ```
 
-### Prometheus
+### Monitoring
+
+RPM packages are provided by [Packagecloud](https://packagecloud.io/):
 
 <https://github.com/lest/prometheus-rpm>  
 <https://packagecloud.io/prometheus-rpm>
 
-Configuration:
+```bash
+# download the packages from packagecloud
+wget --content-disposition https://packagecloud.io/prometheus-rpm/release/packages/el/7/prometheus2-2.2.1-1.el7.centos.x86_64.rpm/download.rpm -P /tmp
+wget --content-disposition https://packagecloud.io/prometheus-rpm/release/packages/el/7/node_exporter-0.15.2-1.el7.centos.x86_64.rpm/download.rpm -P /tmp
+wget --content-disposition https://packagecloud.io/grafana/stable/packages/el/6/grafana-5.1.3-1.x86_64.rpm/download.rpm -P /tmp
+# upload the packages to the local repository
+vm sy lxrepo01 -r -D /tmp/{prom,node,graf}*.rpm :/var/www/html/repo/
+vm ex lxrepo01 -r createrepo /var/www/html/repo
+```
+
+**Prometheus** configuration:
 
  Node     | SLS                                       | Description
 ----------|-------------------------------------------|--------------------------------
@@ -305,18 +319,12 @@ Configuration:
  ~        | [prometheus-node-exporter.sls](srv/salt/prometheus-node-exporter.sls) | Nodes expose monitoring metrics with `node-expoerter`
 
 ```bash
-# download the packages from packagecloud
-wget --content-disposition https://packagecloud.io/prometheus-rpm/release/packages/el/7/prometheus2-2.2.1-1.el7.centos.x86_64.rpm/download.rpm -P /tmp
-wget --content-disposition https://packagecloud.io/prometheus-rpm/release/packages/el/7/node_exporter-0.15.2-1.el7.centos.x86_64.rpm/download.rpm -P /tmp
-# upload the packages to the local repository
-vm sy lxrepo01 -r -D /tmp/{prom,node}*.rpm :/var/www/html/repo/
-vm ex lxrepo01 -r createrepo /var/www/html/repo
-# configure the Promehteus server 
+# configure the Prometheus server 
 vm ex lxcm01 -r salt 'lxmon*' state.apply
 # open the Prometheus metrics page in your default browser
-$BROWSER http://$(virsh-nat-bridge lo lxmon01 | cut -d' ' -f2):9090/metrics
-# check teh state of nodes defined in for scraping metrics
-$BROWSER http://$(virsh-nat-bridge lo lxmon01 | cut -d' ' -f2):9090/targets
+$BROWSER http://$(vm lk lxmon01 | cut -d' ' -f2):9090/metrics
+# check the state of nodes defined in for scraping metrics
+$BROWSER http://$(vm lk lxmon01 | cut -d' ' -f2):9090/targets
 ```
 
 The Prometheus server configuration: [prometheus.yml](srv/salt/prometheus/prometheus.yml) (cf. [Prometheus Configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/))
@@ -325,3 +333,18 @@ The Prometheus server configuration: [prometheus.yml](srv/salt/prometheus/promet
 # deploy the node-exporter on all nodes
 vm ex lxcm01 -r -- salt -t 120 -C "'* and not L@lxcm01.devops.test'" state.apply prometheus-node-exporter
 ```
+
+**Grafana** configuration:
+
+ Node     | SLS                                       | Description
+----------|-------------------------------------------|--------------------------------
+ lxmon01  | [grafana.sls](srv/salt/grafana.sls)       | Prometheus server configuration
+
+```bash
+# open the Grafana web-interface in your default browser
+$BROWSER http://$(vm lk lxmon01 | cut -d' ' -f2):3000
+# default user/password: admin/admin
+```
+
+Cf. [Grafana Configuration](http://docs.grafana.org/installation/configuration/)
+
