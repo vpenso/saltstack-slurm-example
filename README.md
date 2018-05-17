@@ -297,12 +297,12 @@ salt 'lxb*' saltutil.kill_job $jid
 <https://github.com/lest/prometheus-rpm>  
 <https://packagecloud.io/prometheus-rpm>
 
-Configure the Prometheus server:
+Configuration:
 
  Node     | SLS                                       | Description
 ----------|-------------------------------------------|--------------------------------
  lxmon01  | [prometheus.sls](srv/salt/prometheus.sls) | Prometheus server configuration
- ~        | [prometheus-node-exporter.sls](srv/salt/prometheus-node-exporter.sls) | Nodes exposing monitoring metrics
+ ~        | [prometheus-node-exporter.sls](srv/salt/prometheus-node-exporter.sls) | Nodes expose monitoring metrics with `node-expoerter`
 
 ```bash
 # download the packages from packagecloud
@@ -315,6 +315,13 @@ vm ex lxrepo01 -r createrepo /var/www/html/repo
 vm ex lxcm01 -r salt 'lxmon*' state.apply
 # open the Prometheus metrics page in your default browser
 $BROWSER http://$(virsh-nat-bridge lo lxmon01 | cut -d' ' -f2):9090/metrics
-# open the expression browser
-$BROWSER http://$(virsh-nat-bridge lo lxmon01 | cut -d' ' -f2):9090/graph
+# check teh state of nodes defined in for scraping metrics
+$BROWSER http://$(virsh-nat-bridge lo lxmon01 | cut -d' ' -f2):9090/targets
+```
+
+The Prometheus server configuration: [prometheus.yml](srv/salt/prometheus/prometheus.yml) (cf. [Prometheus Configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/))
+
+```bash
+# deploy the node-exporter 
+vm ex lxcm01 -r -- salt -t 120 'lxb*' state.apply prometheus-node-exporter
 ```

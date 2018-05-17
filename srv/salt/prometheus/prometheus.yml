@@ -5,6 +5,13 @@ scrape_configs:
     scrape_interval: 5s
     static_configs:
       - targets: ['localhost:9090']
-  - job_name: node
+  - job_name: nodes
     static_configs:
-      - targets: ['localhost:9100']
+      - targets: 
+        - localhost:9100
+        - lxrm01.devops.test:9100
+        - lxrm01.devops.test:9100
+        - lxb001.devops.test:9100
+        - lxb002.devops.test:9100
+        - lxb003.devops.test:9100
+        - lxb004.devops.test:9100
