@@ -346,5 +346,8 @@ $BROWSER http://$(vm lk lxmon01 | cut -d' ' -f2):3000
 # default user/password: admin/admin
 ```
 
-Cf. [Grafana Configuration](http://docs.grafana.org/installation/configuration/)
+Cf. [Grafana Configuration](http://docs.grafana.org/installation/configuration/):
+
+* Prometheus is configured as data-source with [prometheus.yml](srv/salt/grafana/prometheus.yml)
+* Import one of the node exporter dashboards, i.e. ID:[1860](https://grafana.com/dashboards/1860)
 
