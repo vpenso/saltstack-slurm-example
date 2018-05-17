@@ -8,8 +8,12 @@ scrape_configs:
   - job_name: nodes
     static_configs:
       - targets: 
-        - localhost:9100
+        - lxmon01.devops.test:9100
+        - lxrepo01.devops.test:9100
+        - lxfs01.devops.test:9100
         - lxrm01.devops.test:9100
+        - lxrm02.devops.test:9100
+        - lxdb01.devops.test:9100
         - lxrm01.devops.test:9100
         - lxb001.devops.test:9100
         - lxb002.devops.test:9100

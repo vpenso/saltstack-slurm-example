@@ -322,6 +322,6 @@ $BROWSER http://$(virsh-nat-bridge lo lxmon01 | cut -d' ' -f2):9090/targets
 The Prometheus server configuration: [prometheus.yml](srv/salt/prometheus/prometheus.yml) (cf. [Prometheus Configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/))
 
 ```bash
-# deploy the node-exporter 
-vm ex lxcm01 -r -- salt -t 120 'lxb*' state.apply prometheus-node-exporter
+# deploy the node-exporter on all nodes
+vm ex lxcm01 -r -- salt -t 120 -C "'* and not L@lxcm01.devops.test'" state.apply prometheus-node-exporter
 ```
