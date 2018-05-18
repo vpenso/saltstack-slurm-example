@@ -274,7 +274,7 @@ Slurm **executuion nodes** configuration:
 
 ```bash
 # configure all Slurm execution nodes
-vm ex lxcm01 -r -- salt -t 300 'lxb*' state.apply
+vm ex lxcm01 -r -- salt -t 300 -E lxb state.apply
 ```
 
 Install user application software (cf. [Salt Job Management](https://docs.saltstack.com/en/latest/topics/jobs/index.html)):
@@ -360,6 +360,13 @@ Depending on the test the virtual machine resource can be adjusted
 NODES='lxb00[1-4]' vn co -M 2 -c 2 -vO
 # shutdown, undefine, define, start VM instances
 NODES='lxb00[1-4]' vn rd
+```
+
+Configuring OpenMPI with a firewall is still an issue:
+
+```bash
+# switch of the firewall on execution nodes
+vm ex lxcm01 -r -- salt -E lxb service.stop firewalld
 ```
 
 Run an example MPI application
