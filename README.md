@@ -243,8 +243,8 @@ Slurm **Controller** (master/slave) configuration;
 ```bash
 # configure the Slurm master and slave 
 vm ex lxcm01 -r -- salt -t 300 'lxrm*' state.apply
-# check the service daemons
-vm ex lxcm01 -r salt 'lxrm*' service.status 'slurm*'
+# check the service daemons with expression matching
+vm ex lxcm01 -r -- salt -E "'lx(rm|b)'" service.status 'slurm*'
 ```
 
 Configure the Slurm accounting database:
@@ -366,13 +366,13 @@ Run an example MPI application
 
 ```bash
 # login as a user to an execution node
-vm lo lxb001 -r su sulu
+vm lo lxb001 -r -- su - sulu
 # compile a sample MPI program
-mpicc -O3 /opt/ohpc/pub/examples/mpi/hello.c -o /nfs/sulu/hello
+mpicc -O3 /opt/ohpc/pub/examples/mpi/hello.c -o hello
 # allocate two nodes
 salloc -N 2 /bin/bash
 # run the MPI application
-srun --mpi pmix /nfs/sulu/hello
+srun --mpi pmix hello
 # or 
-prun /nfs/sulu/hello
+prun hello
 ```

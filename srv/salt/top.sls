@@ -37,3 +37,4 @@ base:
      - slurm-nfs
      - slurmd
      - nfs
+     - openmpi
