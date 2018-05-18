@@ -6,7 +6,6 @@ users_packages:
       - singularity-ohpc
       - gnu7-compilers-ohpc
       - llvm5-compilers-ohpc
-      - openmpi3-gnu7-ohpc
       - openmpi3-pmix-slurm-gnu7-ohpc
       - ohpc-autotools
       - ohpc-gnu7-perf-tools

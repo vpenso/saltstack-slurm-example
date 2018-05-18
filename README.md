@@ -21,10 +21,8 @@ The shell script ↴ [source_me.sh](source_me.sh) adds the tool-chain in this re
 
 ```bash
 # load the environment
->>> source source_me.sh
-# list of required virtual machines
->>> echo $NODES         
-lxcm01,lxrepo01,lxdb01,lxfs01,lxrm0[1,2],lxb00[1-4]
+>>> source source_me.sh 
+NODES=lxcm01,lxrepo01,lxdb01,lxfs01,lxmon01,lxrm0[1,2],lxb00[1-4]
 ```
 
 ### Prerequisites
@@ -360,8 +358,8 @@ Depending on the test the virtual machine resource can be adjusted
 ```bash
 # reconfigure the libvirt VM instance configuration, i.e. 2GB RAM, 2 CPUs and VNC support
 NODES='lxb00[1-4]' vn co -M 2 -c 2 -vO
-# shutdown, undefine, define, start VM instance
-NODES='lxb00[1-4]' virsh-nodeset redefine
+# shutdown, undefine, define, start VM instances
+NODES='lxb00[1-4]' vn rd
 ```
 
 Run an example MPI application

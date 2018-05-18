@@ -32,16 +32,19 @@ done
 __dir="$( cd -P "$( dirname "$__source" )" && pwd )"
 
 export SALTSTACK_EXAMPLE=$__dir
+echo SALTSTACK_EXAMPLE=$SALTSTACK_EXAMPLE
 
 unset __dir
 unset __source
 
 export NODES=lxcm01,lxrepo01,lxdb01,lxfs01,lxmon01,lxrm0[1,2],lxb00[1-4]
 
-#for file in `\ls $SALTSTACK_EXAMPLE/var/aliases/*.sh`
-#do 
-#  source $file
-#done
+echo NODES=$NODES
+
+for file in `\ls $SALTSTACK_EXAMPLE/var/aliases/*.sh`
+do 
+  source $file
+done
 
 #export PATH=$SALTSTACK_EXAMPLE/bin:$PATH
 
