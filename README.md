@@ -75,13 +75,13 @@ Install Saltstack on all nodes (cf. [Salt configuration](https://docs.saltstack.
   yum install -y salt-master;
   firewall-cmd --permanent --zone=public --add-port=4505-4506/tcp;
   firewall-cmd --reload;
-  systemctl start salt-master && systemctl  status salt-master
+  systemctl enable --now salt-master && systemctl status salt-master
 '
 # install the SaltStack minions on all nodes
 >>> vn ex '
   yum install -y salt-minion;
   echo "master: 10.1.1.7" > /etc/salt/minion;
-  systemctl start salt-minion && systemctl status salt-minion
+  systemctl enable --now salt-minion && systemctl status salt-minion
 '
 ```
 
@@ -355,10 +355,13 @@ Cf. [Grafana Configuration](http://docs.grafana.org/installation/configuration/)
 
 ## Usage
 
-
+Depending on the test the virtual machine resource can be adjusted
 
 ```bash
-NODES='lxb00[1-4]' vn co -O -M 2 -c 2
+# reconfigure the libvirt VM instance configuration, i.e. 2GB RAM, 2 CPUs and VNC support
+NODES='lxb00[1-4]' vn co -M 2 -c 2 -vO
+# shutdown, undefine, define, start VM instance
+NODES='lxb00[1-4]' virsh-nodeset redefine
 ```
 
 Run an example MPI application
