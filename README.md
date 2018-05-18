@@ -324,9 +324,9 @@ vm ex lxrepo01 -r createrepo /var/www/html/repo
 # configure the Prometheus server 
 vm ex lxcm01 -r salt 'lxmon*' state.apply
 # open the Prometheus metrics page in your default browser
-$BROWSER http://$(vm lk lxmon01 | cut -d' ' -f2):9090/metrics
+$BROWSER http://$(vm ip lxmon01):9090/metrics
 # check the state of nodes defined in for scraping metrics
-$BROWSER http://$(vm lk lxmon01 | cut -d' ' -f2):9090/targets
+$BROWSER http://$(vm ip lxmon01):9090/targets
 ```
 
 The Prometheus server configuration: [prometheus.yml](srv/salt/prometheus/prometheus.yml) (cf. [Prometheus Configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/))
@@ -344,7 +344,7 @@ vm ex lxcm01 -r -- salt -t 120 -C "'* and not L@lxcm01.devops.test'" state.apply
 
 ```bash
 # open the Grafana web-interface in your default browser
-$BROWSER http://$(vm lk lxmon01 | cut -d' ' -f2):3000
+$BROWSER http://$(vm ip lxmon01):3000
 # default user/password: admin/admin
 ```
 
@@ -354,6 +354,12 @@ Cf. [Grafana Configuration](http://docs.grafana.org/installation/configuration/)
 * Import one of the node exporter dashboards, i.e. ID:[1860](https://grafana.com/dashboards/1860)
 
 ## Usage
+
+
+
+```bash
+NODES='lxb00[1-4]' vn co -O -M 2 -c 2
+```
 
 Run an example MPI application
 

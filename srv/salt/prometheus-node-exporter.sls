@@ -5,7 +5,8 @@ prometheus__node_exporter_package:
 
 prometheus_node_exporter_service:
   service.running:
-  - name: node_exporter.service
+    - name: node_exporter.service
+    - enable: True
 
 #
 # Configure the firewall only if it is running
