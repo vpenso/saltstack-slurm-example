@@ -366,7 +366,13 @@ Configuring OpenMPI with a firewall is still an issue:
 
 ```bash
 # switch of the firewall on execution nodes
-vm ex lxcm01 -r -- salt -E lxb service.stop firewalld
+>>> vm ex lxcm01 -r -- salt -E lxb service.stop firewalld
+# Slurm port range Configuration
+>>> vm ex lxrm01 -- scontrol show config | grep -i srun
+SrunEpilog              = (null)
+SrunPortRange           = 35000-45000
+SrunProlog              = (null)
+
 ```
 
 Run an example MPI application
@@ -374,6 +380,8 @@ Run an example MPI application
 ```bash
 # login as a user to an execution node
 vm lo lxb001 -r -- su - sulu
+# list MPI environments
+srun --mpi=list
 # compile a sample MPI program
 mpicc -O3 /opt/ohpc/pub/examples/mpi/hello.c -o hello
 # allocate two nodes
