@@ -27,7 +27,19 @@ NODES=lxcm01,lxrepo01,lxdb01,lxfs01,lxmon01,lxrm0[1,2],lxb00[1-4]
 
 ### Prerequisites
 
-Include the [SaltStack package repository][spr] to the **CentOS** virtual machine image:
+List of required virtual machines and services:
+
+Node         | Description
+-------------|-------------------------------
+lxcm01       | SaltStack master
+lxrepo01     | CentOS 7 package mirror & site repo
+lxrm0[1,2]   | Slurm master/slave
+lxfs01       | NFS Slurm configuration server
+lxdb01       | MySQL database
+lxmon01      | Prometheus monitoring server
+lxb00[1-4]   | Slurm execution nodes
+
+Make sure that the [SaltStack package repository][spr] is included in the **CentOS** virtual machine image:
 
 [spr]: https://docs.saltstack.com/en/latest/topics/installation/rhel.html
 
@@ -42,19 +54,13 @@ gpgkey=https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/SALTST
        https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/base/RPM-GPG-KEY-CentOS-7
 ```
 
-List of required virtual machines and services:
+Alternatively copy the repo configuration to all VMs after start:
 
-Node         | Description
--------------|-------------------------------
-lxcm01       | SaltStack master
-lxrepo01     | CentOS 7 package mirror & site repo
-lxrm0[1,2]   | Slurm master/slave
-lxfs01       | NFS Slurm configuration server
-lxdb01       | MySQL database
-lxmon01      | Prometheus monitoring server
-lxb00[1-4]   | Slurm execution nodes
+```bash
+vn sy -r $SALTSTACK_EXAMPLE/etc/yum.repos.d/salt.repo :/etc/yum.repos.d/salt.repo
+```
 
-Provision all required virtual machine instances with [vm-tools](https://github.com/vpenso/vm-tools):
+Provision all required virtual machine instances
 
 ```bash
 # start new VM instances using `centos7` as source image
@@ -76,7 +82,7 @@ Install Saltstack on all nodes (cf. [Salt configuration](https://docs.saltstack.
   systemctl enable --now salt-master && systemctl status salt-master
 '
 # install the SaltStack minions on all nodes
->>> vn ex '
+>>> vn ex -r '
   yum install -y salt-minion;
   echo "master: 10.1.1.7" > /etc/salt/minion;
   systemctl enable --now salt-minion && systemctl status salt-minion
